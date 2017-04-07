@@ -1,7 +1,7 @@
 package com.gs.buluo.app.presenter;
 
 import android.text.TextUtils;
-import android.util.Log;
+import android.widget.Button;
 
 import com.gs.buluo.app.R;
 import com.gs.buluo.app.TribeApplication;
@@ -16,6 +16,7 @@ import com.gs.buluo.app.dao.AddressInfoDao;
 import com.gs.buluo.app.dao.UserInfoDao;
 import com.gs.buluo.app.eventbus.SelfEvent;
 import com.gs.buluo.app.model.MainModel;
+import com.gs.buluo.app.network.BaseSubscriber;
 import com.gs.buluo.app.network.TribeCallback;
 import com.gs.buluo.app.triphone.LinphoneManager;
 import com.gs.buluo.app.triphone.LinphonePreferences;
@@ -31,10 +32,10 @@ import org.linphone.core.LinphoneCoreFactory;
 import java.util.List;
 import java.util.Map;
 
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.functions.Action1;
 
 /**
  * Created by hjn on 2016/11/3.
@@ -47,51 +48,77 @@ public class LoginPresenter extends BasePresenter<ILoginView> {
         mainModel = new MainModel();
     }
 
-    public void doLogin(Map<String, String> params) {
-        mainModel.doLogin(params, new Callback<UserBeanResponse>() {
+    public void doLogin(Map<String, String> params, final Button button) {
+        //wbn
+        setButtonFalse(button);
+        mainModel.rxDoLogin(params, new Action1<UserBeanResponse>() {
             @Override
-            public void onResponse(Call<UserBeanResponse> call, Response<UserBeanResponse> response) {
-                UserBeanResponse user = response.body();
-                if (null != user && user.getCode() == 200 || null != user && user.getCode() == 201) {
-                    String uid = user.getData().getAssigned();
-                    token = response.body().getData().getToken();
-                    UserInfoEntity entity =new UserInfoEntity();
-                    entity.setId(uid);
-                    entity.setToken(token);
-                    TribeApplication.getInstance().setUserInfo(entity);
-                    getUserInfo(uid);
-                    getAddressInfo(uid);
-                } else if (user!=null&&user.getCode()==401){
-                    if (isAttach()) mView.showError(R.string.wrong_verify);
-                }
+            public void call(UserBeanResponse user) {
+
+                doOnLogin(user);
+
+            }
+        }, new BaseSubscriber<UserBeanResponse>() {
+            @Override
+            public void onCompleted() {
+                setButtonTrue(button);
             }
 
             @Override
-            public void onFailure(Call<UserBeanResponse> call, Throwable t) {
-                if (isAttach())mView.showError(R.string.connect_fail);
+            public void onError(Throwable e) {
+                setButtonTrue(button);
+                super.onError(e);
+            }
+
+            @Override
+            public void onNext(UserBeanResponse userBeanResponse) {
+
             }
         });
+
+
+    }
+
+    private void doOnLogin(UserBeanResponse user) {
+        String uid = user.getData().getAssigned();
+        token = user.getData().getToken();
+        UserInfoEntity entity = new UserInfoEntity();
+        entity.setId(uid);
+        entity.setToken(token);
+        TribeApplication.getInstance().setUserInfo(entity);
+        getUserInfo(uid);
+        getAddressInfo(uid);
+    }
+
+    private void setButtonFalse(Button button) {
+        button.setClickable(false);
+        button.setText(R.string.sign_in_ing);
+    }
+
+    private void setButtonTrue(Button button) {
+        button.setText(R.string.sign_in);
+        button.setClickable(true);
     }
 
     public void doVerify(String phone) {
         mainModel.doVerify(phone, new Callback<BaseResponse<CodeResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<CodeResponse>> call, Response<BaseResponse<CodeResponse>> response) {
-                if (response.body()!=null){
+                if (response.body() != null) {
                     BaseResponse res = response.body();
-                    if (res.code==202){
-                        if (isAttach())mView.dealWithIdentify(202);
-                    }else {
+                    if (res.code == 202) {
+                        if (isAttach()) mView.dealWithIdentify(202);
+                    } else {
                         if (isAttach()) mView.dealWithIdentify(400);
                     }
-                }else {
-                    if (isAttach())mView.showError(R.string.connect_fail);
+                } else {
+                    if (isAttach()) mView.showError(R.string.connect_fail);
                 }
             }
 
             @Override
             public void onFailure(Call<BaseResponse<CodeResponse>> call, Throwable t) {
-                if (isAttach())mView.showError(R.string.connect_fail);
+                if (isAttach()) mView.showError(R.string.connect_fail);
             }
         });
     }
@@ -104,7 +131,8 @@ public class LoginPresenter extends BasePresenter<ILoginView> {
                 entity.setSipJson();
                 if (!CommonUtils.isLibc64()) {
                     SipBean sip = entity.getSip();
-                    if (sip!=null) saveCreatedAccount(sip.user, sip.password, null, null, sip.domain, LinphoneAddress.TransportType.LinphoneTransportUdp);
+                    if (sip != null)
+                        saveCreatedAccount(sip.user, sip.password, null, null, sip.domain, LinphoneAddress.TransportType.LinphoneTransportUdp);
                 }
                 entity.setToken(token);
                 if (entity.getDistrict() != null)
@@ -134,15 +162,15 @@ public class LoginPresenter extends BasePresenter<ILoginView> {
         mainModel.getAddressList(assigned, new Callback<UserAddressListResponse>() {
             @Override
             public void onResponse(Call<UserAddressListResponse> call, Response<UserAddressListResponse> response) {
-                if (response!=null&&response.body()!=null){
-                    List<UserAddressEntity > list=response.body().data;
-                    AddressInfoDao dao=new AddressInfoDao();
-                    for (UserAddressEntity address:list){
+                if (response != null && response.body() != null) {
+                    List<UserAddressEntity> list = response.body().data;
+                    AddressInfoDao dao = new AddressInfoDao();
+                    for (UserAddressEntity address : list) {
                         address.setUid(TribeApplication.getInstance().getUserInfo().getId());
-                        address.setArea(address.getProvice(),address.getCity(),address.getDistrict());
+                        address.setArea(address.getProvice(), address.getCity(), address.getDistrict());
                         dao.saveBindingId(address);
                     }
-                }else {
+                } else {
                     mView.showError(R.string.connect_fail);
                 }
 
@@ -172,7 +200,7 @@ public class LoginPresenter extends BasePresenter<ILoginView> {
                 .setHa1(ha1)
                 .setPassword(password);
 
-        if(prefix != null){
+        if (prefix != null) {
             builder.setPrefix(prefix);
         }
         String forcedProxy = "";
@@ -182,7 +210,7 @@ public class LoginPresenter extends BasePresenter<ILoginView> {
                     .setAvpfRRInterval(5);
         }
 
-        if(transport != null) {
+        if (transport != null) {
             builder.setTransport(transport);
         }
 

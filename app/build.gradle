@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.antfortune.freeline'
+apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 24
@@ -19,10 +20,11 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0.1"
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {
         release {
-            storeFile file("F://project/keystore.jks")
+            storeFile file("C://Users/fs/Documents/Tencent Files/331233573/FileRecv/keystore.jks")
             storePassword "555555"
             keyAlias "key"
             keyPassword "555555"
@@ -57,11 +59,15 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.0.0'
     compile 'com.jakewharton:butterknife:7.0.0'
     compile 'com.facebook.fresco:fresco:1.0.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'io.reactivex:rxandroid:1.0.1'
+    //RxJava
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
+    //retrofit
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.2'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+
     compile 'com.youth.banner:banner:1.4.2'
     compile 'com.brucetoo.pickview:library:1.2.2'
     compile 'org.xutils:xutils:3.3.36'
@@ -74,4 +80,58 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.google.zxing:core:3.2.1'
+    //dagger2
+    apt 'com.google.dagger:dagger-compiler:2.0.2' //指定注解处理器
+    compile 'com.google.dagger:dagger:2.0.2'  //dagger公用api
+    provided 'org.glassfish:javax.annotation:10.0-b28'  //添加android缺失的部分javax注解
+    //rxbingding
+    compile 'com.jakewharton.rxbinding:rxbinding:1.0.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
 }
+public class BuildTimeListener implements TaskExecutionListener,BuildListener{
+    private Clock clock
+    private times = []
+    @Override
+    void buildStarted(Gradle gradle) {
+
+    }
+
+    @Override
+    void settingsEvaluated(Settings settings) {
+
+    }
+
+    @Override
+    void projectsLoaded(Gradle gradle) {
+
+    }
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {
+
+    }
+
+    @Override
+    void buildFinished(BuildResult result) {
+        println "Task spend time:"
+        for (time in times){
+            if (time[0] >= 50){
+                printf "%7sms %s\n",time
+            }
+        }
+    }
+
+    @Override
+    void beforeExecute(Task task) {
+        clock = new org.gradle.util.Clock()
+    }
+
+    @Override
+    void afterExecute(Task task, TaskState state) {
+        def ms = clock.timeInMs
+        times.add([ms,task.path])
+    }
+}
+project.gradle.addListener(new BuildTimeListener())

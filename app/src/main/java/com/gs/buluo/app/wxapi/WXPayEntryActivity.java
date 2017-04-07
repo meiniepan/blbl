@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.gs.buluo.app.Constant;
-import com.gs.buluo.app.eventbus.TopUpEvent;
-import com.gs.buluo.app.model.MoneyModel;
-import com.gs.buluo.app.utils.ToastUtils;
+import com.gs.buluo.app.eventbus.TopupEvent;
 import com.gs.buluo.app.view.widget.LoadingDialog;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
@@ -50,7 +48,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onResp(BaseResp baseResp) {
-        EventBus.getDefault().post(new TopUpEvent());
+        EventBus.getDefault().post(new TopupEvent());
         LoadingDialog.getInstance().dismissDialog();
         finish();
     }

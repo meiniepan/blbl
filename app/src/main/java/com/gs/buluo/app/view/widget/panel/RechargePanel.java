@@ -18,7 +18,7 @@ import com.gs.buluo.app.bean.OrderBean;
 import com.gs.buluo.app.bean.ResponseBody.BaseResponse;
 import com.gs.buluo.app.bean.ResponseBody.CodeResponse;
 import com.gs.buluo.app.bean.WxPayResponse;
-import com.gs.buluo.app.eventbus.TopUpEvent;
+import com.gs.buluo.app.eventbus.TopupEvent;
 import com.gs.buluo.app.model.MoneyModel;
 import com.gs.buluo.app.network.TribeCallback;
 import com.gs.buluo.app.utils.ToastUtils;
@@ -130,7 +130,7 @@ public class RechargePanel extends Dialog implements View.OnClickListener {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void rechargeSuccess(TopUpEvent event) {
+    public void rechargeSuccess(TopupEvent event) {
         new MoneyModel().getWXRechargeResult(prepayid, new TribeCallback<CodeResponse>() {
             @Override
             public void onSuccess(Response<BaseResponse<CodeResponse>> response) {

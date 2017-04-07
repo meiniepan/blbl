@@ -1,38 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:background="@drawable/text_background_round"
-    android:layout_gravity="center"
-    android:layout_height="325dp"
-    android:layout_marginTop="10dp"
-    android:layout_width="325dp"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
     <LinearLayout
-        android:gravity="center"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
+        android:id="@+id/ll_open_door"
         android:layout_width="match_parent"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="设备名称 : " />
-
-        <TextView
-            android:id="@+id/door_name"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="大门门锁" />
-    </LinearLayout>
-
-    <include layout="@layout/split_line" />
-
-    <ImageView
-        android:id="@+id/qr_image"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_height="180dp"
-        android:layout_marginTop="10dp"
-        android:layout_width="180dp" />
-</LinearLayout>
+        android:layout_marginTop="0dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@mipmap/open_door_1"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:text="有效时间"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                />
+
+            <TextView
+                android:id="@+id/door_dead_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-8dp"
+                android:layout_marginTop="-10dp"
+                android:text="59"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:text="秒"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@mipmap/open_door_2">
+            <LinearLayout
+                android:id="@+id/ll_door_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimens_opendoor_text"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="设备名称 : "
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    />
+
+                <TextView
+                    android:id="@+id/door_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="大门门锁"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tv_time_over_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dimens_opendoor_text"
+                android:text="@string/qr_time_over_tips"
+                android:textSize="18sp"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                />
+        </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/open_door_3"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="0dp"
+            android:background="@mipmap/open_door_4"
+            >
+
+            <ImageView
+                android:id="@+id/qr_image"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                />
+
+            <ImageView
+                android:id="@+id/iv_open_door_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/open_door_refresh"
+                android:visibility="gone"/>
+        </FrameLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/open_door_5"/>
+
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/iv_open_door_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp"
+        android:background="@mipmap/open_door_00"
+        />
+    </FrameLayout>

@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
@@ -18,12 +20,10 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.gs.buluo.app.Constant;
 import com.gs.buluo.app.R;
 import com.gs.buluo.app.TribeApplication;
-import com.gs.buluo.app.bean.LockEquip;
 import com.gs.buluo.app.bean.LockKey;
 import com.gs.buluo.app.utils.CommonUtils;
 import com.gs.buluo.app.utils.DensityUtils;
 import com.gs.buluo.app.utils.ToastUtils;
-import com.gs.buluo.app.utils.TribeDateUtils;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
@@ -39,15 +39,16 @@ import butterknife.Bind;
 public class OpenDoorActivity extends BaseActivity implements View.OnClickListener {
     private int QR_WIDTH = 0;
     private int QR_HEIGHT = 0;
+    private CountDownTimer countDownTimer;
 
-    ImageView image;
-    TextView tvDoor;
+    ImageView image, ivRefresh, ivOpenDoorBack;
+    TextView tvDoor, tvDeadLine, tvTimeOverTips;
+    LinearLayout ll_open_door, ll_door_name;
     @Bind(R.id.door_mine)
     ViewStub mineView;
     @Bind(R.id.door_visitor)
     ViewStub visitorView;
-    @Bind(R.id.door_dead_line)
-    TextView tvEndTime;
+
 
     private Bitmap bitmap;
     private static IWXAPI msgApi = null;
@@ -62,9 +63,9 @@ public class OpenDoorActivity extends BaseActivity implements View.OnClickListen
         QR_HEIGHT = DensityUtils.dip2px(this, 300);
 
         LockKey key = getIntent().getParcelableExtra(Constant.DOOR);
-        if (key.phone==null){       //本人开锁
+        if (key.phone == null) {       //本人开锁
             initView(key);
-        }else {
+        } else {
             initVisitorView(key);
         }
         createQRImage(code);
@@ -83,17 +84,51 @@ public class OpenDoorActivity extends BaseActivity implements View.OnClickListen
         tvDoor.setText(lockKey.equipName);
         tvName.setText(lockKey.name);
         tvPhone.setText(lockKey.phone);
-        tvEndTime.setText(TribeDateUtils.dateFormat10(lockKey.endTime));
         code = lockKey.key;
     }
 
     private void initView(LockKey key) {
         View view = mineView.inflate();
         image = (ImageView) view.findViewById(R.id.qr_image);
+        tvTimeOverTips = (TextView) view.findViewById(R.id.tv_time_over_tips);
         tvDoor = (TextView) view.findViewById(R.id.door_name);
         tvDoor.setText(key.equipName);
-        tvEndTime.setText(TribeDateUtils.dateFormat10(key.endTime));
-        code =key.key;
+        tvDeadLine = (TextView) view.findViewById(R.id.door_dead_line);
+        ivRefresh = (ImageView) view.findViewById(R.id.iv_open_door_refresh);
+        ivOpenDoorBack = (ImageView) view.findViewById(R.id.iv_open_door_back);
+        ll_open_door = (LinearLayout) view.findViewById(R.id.ll_open_door);
+        ll_door_name = (LinearLayout) view.findViewById(R.id.ll_door_name);
+        ivRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ivOpenDoorBack.setVisibility(View.VISIBLE);
+                ivRefresh.setVisibility(View.GONE);
+                ll_door_name.setVisibility(View.VISIBLE);
+                tvTimeOverTips.setVisibility(View.GONE);
+                countDownTimer.start();
+                image.setAlpha(1f);
+            }
+        });
+        code = key.key;
+
+        countDownTimer = new CountDownTimer(11000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                tvDeadLine.setText(millisUntilFinished / 1000 + "");
+            }
+
+            @Override
+            public void onFinish() {
+                tvDeadLine.setText(0 + "");
+                ivOpenDoorBack.setVisibility(View.INVISIBLE);
+                ivRefresh.setVisibility(View.VISIBLE);
+                ll_door_name.setVisibility(View.GONE);
+                tvTimeOverTips.setVisibility(View.VISIBLE);
+                image.setAlpha(.3f);
+
+            }
+        };
+        countDownTimer.start();
     }
 
     public void createQRImage(String url) {

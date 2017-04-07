@@ -38,5 +38,6 @@
     <dimen name="short_button_width">120dp</dimen>
     <dimen name="bottom_height">50dp</dimen>
     <dimen name="usual_item_height">58dp</dimen>
+    <dimen name="dimens_opendoor_text">15dp</dimen>
 
 </resources>

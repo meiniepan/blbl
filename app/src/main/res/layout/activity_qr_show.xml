@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="true"
     android:fitsSystemWindows="true"
     android:background="@mipmap/qr_bg">
 
@@ -22,29 +21,12 @@
             layout="@layout/back_img_white" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/dead_line"
-            android:textColor="@color/white"/>
-        <TextView
-            android:id="@+id/door_dead_line"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="" />
-    </LinearLayout>
+
 
     <ViewStub
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="0dp"
         android:id="@+id/door_mine"
         android:layout="@layout/door_mine_view"
         android:layout_width="match_parent"

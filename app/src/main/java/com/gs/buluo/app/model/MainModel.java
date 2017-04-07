@@ -3,6 +3,7 @@ package com.gs.buluo.app.model;
 import com.gs.buluo.app.Constant;
 import com.gs.buluo.app.TribeApplication;
 import com.gs.buluo.app.bean.RequestBodyBean.AuthorityRequest;
+import com.gs.buluo.app.bean.RequestBodyBean.LoginBody;
 import com.gs.buluo.app.bean.RequestBodyBean.PhoneUpdateBody;
 import com.gs.buluo.app.bean.RequestBodyBean.ValueRequestBody;
 import com.gs.buluo.app.bean.ResponseBody.BaseResponse;
@@ -11,10 +12,11 @@ import com.gs.buluo.app.bean.ResponseBody.UploadAccessBody;
 import com.gs.buluo.app.bean.ResponseBody.UploadAccessResponse;
 import com.gs.buluo.app.bean.ResponseBody.UserAddressListResponse;
 import com.gs.buluo.app.bean.ResponseBody.UserBeanResponse;
-import com.gs.buluo.app.bean.RequestBodyBean.LoginBody;
 import com.gs.buluo.app.bean.UserInfoEntity;
+import com.gs.buluo.app.network.BaseSubscriber;
 import com.gs.buluo.app.network.MainApis;
 import com.gs.buluo.app.network.TribeRetrofit;
+import com.gs.buluo.app.network.rxApis;
 
 import org.xutils.common.Callback.CommonCallback;
 import org.xutils.common.util.MD5;
@@ -27,6 +29,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import retrofit2.Callback;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by hjn on 2016/11/3.
@@ -38,6 +43,20 @@ public class MainModel {             //登录数据同步,上传，验证码
         bean.verificationCode = params.get(Constant.VERIFICATION);
         TribeRetrofit.getInstance().createApi(MainApis.class).
                 doLogin(bean).enqueue(callback);
+    }
+    //rxjava 登陆
+    public void rxDoLogin(Map<String, String> params, Action1<UserBeanResponse> action1, BaseSubscriber<UserBeanResponse> subscriber) {
+        LoginBody bean = new LoginBody();
+        bean.phone = params.get(Constant.PHONE);
+        bean.verificationCode = params.get(Constant.VERIFICATION);
+        TribeRetrofit.getInstance().createApi(rxApis.class).
+                doLogin(bean).
+                subscribeOn(Schedulers.newThread()).
+                subscribeOn(Schedulers.io()).
+                doOnNext(action1)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+
     }
 
     public void doVerify(String phone, Callback<BaseResponse<CodeResponse>> callback) {

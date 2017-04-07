@@ -15,7 +15,6 @@ public class LockEquip {
     public String desc;
     public List<String> activityTime;
     public boolean actived;
-
     public LockEquip(String name) {
         this.name =name;
     }

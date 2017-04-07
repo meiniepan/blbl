@@ -31,8 +31,8 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity<T extends BasePresenter<IBaseView>> extends AppCompatActivity {
     View mRoot;
     protected BasePresenter mPresenter;
-
     private int color = R.color.titlebar_background;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

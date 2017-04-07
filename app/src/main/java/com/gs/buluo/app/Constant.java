@@ -14,6 +14,8 @@ public class Constant {
     public static final String DOOR = "door";
     public static final String DOOR_LIST = "door_list";
     public static final String RE_LOGIN = "re_login";
+    public static final String LOADING = "登陆中...";
+    public static final String LOAD = "登陆";
 
     public final static class Base{
         public static final String BASE="https://app-services.buluo-gs.com/";

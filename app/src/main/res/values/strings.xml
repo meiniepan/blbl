@@ -263,5 +263,8 @@
     <string name="no_company_bind">您还未绑定公司</string>
     <string name="visitor_check">访客手机号不能与本人手机号相同</string>
     <string name="no_door">您的公司未被授权,暂不支持开锁</string>
+    <string name="sign_in_ing">登陆中...</string>
+    <string name="sign_in">登陆</string>
+    <string name="qr_time_over_tips">您的二维码超时，请您重新获取</string>
 
 </resources>
