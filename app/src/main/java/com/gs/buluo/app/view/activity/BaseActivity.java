@@ -33,7 +33,6 @@ public abstract class BaseActivity<T extends BasePresenter<IBaseView>> extends A
     protected BasePresenter mPresenter;
     private int color = R.color.titlebar_background;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
