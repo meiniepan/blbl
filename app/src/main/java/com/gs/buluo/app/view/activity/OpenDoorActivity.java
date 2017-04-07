@@ -111,7 +111,7 @@ public class OpenDoorActivity extends BaseActivity implements View.OnClickListen
         });
         code = key.key;
 
-        countDownTimer = new CountDownTimer(11000, 1000) {
+        countDownTimer = new CountDownTimer(60000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 tvDeadLine.setText(millisUntilFinished / 1000 + "");
