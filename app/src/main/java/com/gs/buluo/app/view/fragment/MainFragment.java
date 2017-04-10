@@ -67,6 +67,7 @@ public class MainFragment extends BaseFragment implements IMainView, View.OnClic
         line.setVisibility(View.GONE);
         titleBar.getBackground().setAlpha(0);
         title.setVisibility(View.GONE);
+
         getActivity().findViewById(R.id.shopping).setOnClickListener(this);
         getActivity().findViewById(R.id.shopping_area).setOnClickListener(this);
         getActivity().findViewById(R.id.food).setOnClickListener(this);
